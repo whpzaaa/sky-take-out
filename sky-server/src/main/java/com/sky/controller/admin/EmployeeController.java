@@ -127,4 +127,15 @@ public class EmployeeController {
         Employee employee = employeeService.getById(id);
         return Result.success(employee);
     }
+    /**
+     * 编辑用户
+     *
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("编辑用户信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        employeeService.update(employeeDTO);
+        return Result.success();
+    }
 }
