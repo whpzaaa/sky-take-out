@@ -105,4 +105,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return;
     }
 
+    @Override
+    public Employee getById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        return employee;
+    }
+
 }
