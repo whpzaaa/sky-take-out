@@ -22,7 +22,7 @@ public class DishServiceImpl implements DishService {
     private DishMapper dishMapper;
     @Autowired
     private DishFlavorMapper dishFlavorMapper;
-    //事务注解 保证多表操作一致性 既要插入菜品表又要插入口味表 1
+    //事务注解 保证多表操作一致性 既要插入菜品表又要插入口味表
     @Transactional
     public void save(DishDTO dishDTO) {
         //dish表中需要传入dish对象 dto对象中的口味集合要传入口味表中
