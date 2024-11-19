@@ -26,7 +26,6 @@ public class CommonController {
     @ApiOperation("文件上传接口")
     public Result<String> upload(MultipartFile file) throws IOException {
         log.info("文件上传：{}",file);
-        String path = null;
         try {
             //获取文件的原始名 （****.***）
             String originalFilename = file.getOriginalFilename();
@@ -35,7 +34,7 @@ public class CommonController {
             //通过uuid获取随机字符串并与后缀进行拼接 得到上传到阿里云的文件名
             String objectName = UUID.randomUUID().toString() + extension;
             //调用aliossutill工具类的upload方法 获取文件访问路径 返回给前端 前端通过访问该路径进行页面展示
-            path = aliOssUtil.upload(file.getBytes(), objectName);
+            String path = aliOssUtil.upload(file.getBytes(), objectName);
             return Result.success(path);
         } catch (IOException e) {
             log.info("文件上传失败，{}",e);
