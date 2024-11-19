@@ -10,4 +10,10 @@
             (#{flavor.dishId},#{flavor.name},#{flavor.value})
         </foreach>
     </update>
+    <delete id="deleteByDishIds">
+        delete from sky_take_out.dish_flavor where dish_id in
+        <foreach collection="ids" separator="," close=")" open="(" item="id">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

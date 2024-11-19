@@ -9,6 +9,8 @@ import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface DishMapper {
 
@@ -23,6 +25,12 @@ public interface DishMapper {
     void insert(Dish dish);
 
     Page<DishVO> page(DishPageQueryDTO dishPageQueryDTO);
+
+    void delete(List<Long> ids);
+    @Select("select * from sky_take_out.dish where id = #{id}")
+    Dish getById(Long id);
+
+
 //    @Select("select id from sky_take_out.dish where name = #{name}")
 //    Long selectByName(String name);
 }
