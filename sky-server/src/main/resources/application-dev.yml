@@ -9,5 +9,5 @@ sky:
   alioss:
     endpoint: oss-cn-hangzhou.aliyuncs.com
     bucket-name: whpz-sky-take-out
-    access-key-secret: OFGvGCLcxWVhYPIxPigD312NQjvzhT
-    access-key-id: LTAI5tA1z7CVhKLjx8jUsHBc
+    access-key-secret:
+    access-key-id:
