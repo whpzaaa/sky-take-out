@@ -11,3 +11,8 @@ sky:
     bucket-name: whpz-sky-take-out
     access-key-secret: OFGvGCLcxWVhYPIxPigD312NQjvzhT
     access-key-id: LTAI5tA1z7CVhKLjx8jUsHBc
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 10
