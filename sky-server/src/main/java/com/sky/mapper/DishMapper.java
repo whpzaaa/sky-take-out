@@ -32,7 +32,12 @@ public interface DishMapper {
     @AutoFill(value = OperationType.UPDATE)
     void update(Dish dish);
 
-
+    /**
+     * 动态条件查询菜品
+     * @param dish
+     * @return
+     */
+    List<Dish> list(Dish dish);
 //    @Select("select id from sky_take_out.dish where name = #{name}")
 //    Long selectByName(String name);
 }
