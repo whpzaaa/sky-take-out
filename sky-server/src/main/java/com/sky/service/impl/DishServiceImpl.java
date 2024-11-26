@@ -9,6 +9,7 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.entity.Employee;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
@@ -143,5 +144,10 @@ public class DishServiceImpl implements DishService {
 
         return dishVOList;
     }
-
+    public void update(Integer status, Long id) {
+        Dish dish = Dish.builder().status(status).id(id).
+//                updateTime(LocalDateTime.now()).updateUser(BaseContext.getCurrentId()).
+        build();
+        dishMapper.update(dish);
+    }
 }
