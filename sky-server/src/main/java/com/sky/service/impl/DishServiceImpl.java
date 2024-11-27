@@ -20,6 +20,7 @@ import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ public class DishServiceImpl implements DishService {
     private DishFlavorMapper dishFlavorMapper;
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+
     //事务注解 保证多表操作一致性 既要插入菜品表又要插入口味表
     @Transactional
     public void save(DishDTO dishDTO) {
@@ -144,6 +146,13 @@ public class DishServiceImpl implements DishService {
 
         return dishVOList;
     }
+
+
+    public List<Dish> getByCategoryId(Long categoryId) {
+        List<Dish> dishes = dishMapper.getByCategoryId(categoryId);
+        return dishes;
+    }
+
     public void update(Integer status, Long id) {
         Dish dish = Dish.builder().status(status).id(id).
 //                updateTime(LocalDateTime.now()).updateUser(BaseContext.getCurrentId()).

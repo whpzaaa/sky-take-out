@@ -2,6 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetmealDishMapper">
+    <insert id="save">
+        insert into sky_take_out.setmeal_dish (setmeal_id, dish_id, name, price, copies) VALUES
+        <foreach collection="setmealDishes" item="SetmealDish" separator=",">
+            (#{SetmealDish.setmealId},#{SetmealDish.dishId},#{SetmealDish.name},#{SetmealDish.price},#{SetmealDish.copies})
+        </foreach>
+    </insert>
+    <delete id="delete" >
+        delete from sky_take_out.setmeal_dish where setmeal_dish.setmeal_id in
+            <foreach collection="ids" item="setmealId" open="(" close=")" separator=",">
+                #{setmealId}
+            </foreach>
+    </delete>
 
     <select id="getSetmealIdByDishIds" resultType="java.lang.Long">
      select sky_take_out.setmeal_dish.setmeal_id from sky_take_out.setmeal_dish where dish_id in

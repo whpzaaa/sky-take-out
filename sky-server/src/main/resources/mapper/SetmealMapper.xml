@@ -2,6 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetmealMapper">
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into sky_take_out.setmeal (category_id, name, price, description, image, create_time, update_time, create_user, update_user,status)
+        values (#{categoryId},#{name},#{price},#{description},#{image},#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})
+    </insert>
+    <update id="update" parameterType="com.sky.entity.Setmeal">
+        update sky_take_out.setmeal
+        <set>
+            <if test="name != null ">name = #{name},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null">image= #{image},</if>
+            <if test="description != null">description= #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="delete" >
+        delete from sky_take_out.setmeal where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")" >
+            #{id}
+        </foreach>
+    </delete>
 
     <select id="list" parameterType="Setmeal" resultType="Setmeal">
         select * from setmeal
@@ -16,5 +40,20 @@
                 and status = #{status}
             </if>
         </where>
+    </select>
+    <select id="page" resultType="com.sky.vo.SetmealVO" parameterType="com.sky.dto.SetmealPageQueryDTO">
+        select * from sky_take_out.setmeal
+        <where>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+        </where>
+        order by create_time desc
     </select>
 </mapper>

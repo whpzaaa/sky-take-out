@@ -38,6 +38,8 @@ public interface DishMapper {
      * @return
      */
     List<Dish> list(Dish dish);
+    @Select("select * from sky_take_out.dish where category_id = #{categoryId}")
+    List<Dish> getByCategoryId(Long categoryId);
 //    @Select("select id from sky_take_out.dish where name = #{name}")
 //    Long selectByName(String name);
 }
