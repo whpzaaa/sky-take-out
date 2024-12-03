@@ -1,5 +1,7 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -23,4 +25,7 @@ public interface OrderMapper {
     @Select("select * from orders where number = #{orderNumber} and user_id= #{userId}")
     Orders getByNumberAndUserId(String orderNumber, Long userId);
 
+    Page<Orders> page(OrdersPageQueryDTO ordersPageQueryDTO);
+    @Select("select * from sky_take_out.orders where id = #{id}")
+    Orders getByOrderId(Long id);
 }

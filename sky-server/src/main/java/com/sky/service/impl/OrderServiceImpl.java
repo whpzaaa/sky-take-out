@@ -1,8 +1,11 @@
 package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
@@ -10,10 +13,12 @@ import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -163,4 +168,68 @@ public class OrderServiceImpl implements OrderService {
 
         orderMapper.update(orders);
     }
+
+
+    public PageResult page(OrdersPageQueryDTO ordersPageQueryDTO) {
+        //将dto中的page和size传给pagehelper进行分页查询，pagehelper会自动拼接limit的sql语句
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+        //调用page方法返回查询到的用户数据集合
+        Page<Orders> page = orderMapper.page(ordersPageQueryDTO);
+        //将orders对象封装为vo对象
+        List<OrderVO> list = new ArrayList<>();
+        if (page != null && page.getTotal() > 0) {
+            for (Orders orders : page) {
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(orders,orderVO);
+                List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(orders.getId());
+                orderVO.setOrderDetailList(orderDetails);
+                list.add(orderVO);
+            }
+        }
+        //创建pageresult对象将page的总条数和返回集合传入并返回
+        PageResult pageResult = new PageResult(page.getTotal(),list);
+        return pageResult;
+    }
+
+
+    public OrderVO getOrderByOrderId(Long id) {
+        Orders orders = orderMapper.getByOrderId(id);
+        List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders,orderVO);
+        orderVO.setOrderDetailList(orderDetails);
+        return orderVO;
+    }
+
+
+    public void cancelById(Long id) {
+        //先根据id获得订单数据
+        Orders order = orderMapper.getByOrderId(id);
+        if (order == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        //再根据订单的状态判断 若status大于2则无法取消 小于2则取消
+        Integer status = order.getStatus();
+        if (status > 2 ) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        order.setStatus(Orders.CANCELLED);
+        orderMapper.update(order);
+    }
+
+    public void repetition(Long id) {
+        //先根据id获取当前的订单明细数据
+        List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
+        //再讲订单的菜品套餐数据加入购物车中
+        List<ShoppingCart> list = new ArrayList<>();
+        for (OrderDetail orderDetail : orderDetails) {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            BeanUtils.copyProperties(orderDetail,shoppingCart);
+            shoppingCart.setUserId(id);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+            list.add(shoppingCart);
+        }
+        shoppingCartMapper.insertBatch(list);
+    }
+
 }
