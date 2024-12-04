@@ -28,4 +28,6 @@ public interface OrderMapper {
     Page<Orders> page(OrdersPageQueryDTO ordersPageQueryDTO);
     @Select("select * from sky_take_out.orders where id = #{id}")
     Orders getByOrderId(Long id);
+    @Select("select count(*) from sky_take_out.orders where status = #{status}")
+    Integer statistics(Integer status);
 }
