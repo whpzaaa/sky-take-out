@@ -6,6 +6,9 @@ import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Mapper
 public interface OrderMapper {
     void save(Orders orders);
@@ -30,4 +33,6 @@ public interface OrderMapper {
     Orders getByOrderId(Long id);
     @Select("select count(*) from sky_take_out.orders where status = #{status}")
     Integer statistics(Integer status);
+    @Select("select * from sky_take_out.orders where status = #{status} and order_time < #{orderTime}")
+    List<Orders> getByStatusAndOrderTime(Integer status, LocalDateTime orderTime);
 }
