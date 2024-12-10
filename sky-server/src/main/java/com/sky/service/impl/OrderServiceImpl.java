@@ -1,6 +1,7 @@
 package com.sky.service.impl;
 
 import com.alibaba.druid.sql.visitor.functions.If;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -20,6 +21,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +46,8 @@ public class OrderServiceImpl implements OrderService {
     private UserMapper userMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    private WebSocketServer webSocketServer;
     @Transactional
     public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
         //先排除异常情况 地址簿和购物车的信息是否存在
@@ -343,4 +345,16 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(order);
     }
 
+
+    public void reminder(Long id) {
+        Orders order = orderMapper.getByOrderId(id);
+        if (order == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        Map map = new HashMap<>();
+        map.put("type",2);
+        map.put("orderId",id);
+        map.put("content", "订单号：" + order.getNumber());
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+    }
 }
