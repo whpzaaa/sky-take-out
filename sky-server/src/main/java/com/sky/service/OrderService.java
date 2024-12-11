@@ -45,5 +45,5 @@ public interface OrderService {
 
     void reminder(Long id);
 
-    TurnoverReportVO turnoverStatistics(LocalDate begin, LocalDate end);
+
 }

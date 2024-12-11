@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.result.Result;
 import com.sky.service.OrderService;
+import com.sky.service.ReportService;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.TurnoverReportVO;
 import io.swagger.annotations.Api;
@@ -21,14 +22,14 @@ import java.time.LocalDate;
 @Slf4j
 public class ReportController {
     @Autowired
-    private OrderService orderService;
+    private ReportService reportService;
     @GetMapping("turnoverStatistics")
     @ApiOperation("统计营业额")
     public Result<TurnoverReportVO> turnoverStatistics(
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end ){
         log.info("统计营业额：{}，{}",begin,end);
-        TurnoverReportVO turnoverReport = orderService.turnoverStatistics(begin,end);
+        TurnoverReportVO turnoverReport = reportService.turnoverStatistics(begin,end);
         return Result.success(turnoverReport);
     }
 }
