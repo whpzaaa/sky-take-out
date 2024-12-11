@@ -1,12 +1,10 @@
 package com.sky.service.impl;
 
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
-import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.*;
 import com.sky.entity.*;
@@ -17,18 +15,18 @@ import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
-import com.sky.vo.OrderPaymentVO;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderSubmitVO;
-import com.sky.vo.OrderVO;
+import com.sky.vo.*;
 import com.sky.websocket.WebSocketServer;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -356,5 +354,35 @@ public class OrderServiceImpl implements OrderService {
         map.put("orderId",id);
         map.put("content", "订单号：" + order.getNumber());
         webSocketServer.sendToAllClient(JSON.toJSONString(map));
+    }
+
+
+    public TurnoverReportVO turnoverStatistics(LocalDate begin, LocalDate end) {
+        //先根据begin end 获取需要展示的日期并拼接成字符串
+        long between = ChronoUnit.DAYS.between(begin, end);
+        List<LocalDate> datelist = new ArrayList<>();
+        for (int i = 0; i < between; i++) {
+            LocalDate date = begin.plusDays(i);
+            datelist.add(date);
+        }
+        datelist.add(end);
+        String datelistString = StringUtils.join(datelist, ",");
+        TurnoverReportVO reportVO = new TurnoverReportVO();
+        reportVO.setDateList(datelistString);
+        //再根据日期查询当天的营业额
+        List<Double> turnoverList = new ArrayList<>();
+        for (LocalDate date : datelist) {
+            LocalDateTime endTime = LocalDateTime.of(date, LocalTime.MAX);
+            LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
+            Double turnover = orderMapper.getSumByTimeAndStatus(beginTime,endTime, Orders.COMPLETED);
+            if (turnover == null ){
+                turnover = 0.0;
+            }
+            turnoverList.add(turnover);
+        }
+
+        String turnoverListString = StringUtils.join(turnoverList, ",");
+        reportVO.setTurnoverList(turnoverListString);
+        return reportVO;
     }
 }

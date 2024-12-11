@@ -2,10 +2,9 @@ package com.sky.service;
 
 import com.sky.dto.*;
 import com.sky.result.PageResult;
-import com.sky.vo.OrderPaymentVO;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderSubmitVO;
-import com.sky.vo.OrderVO;
+import com.sky.vo.*;
+
+import java.time.LocalDate;
 
 public interface OrderService {
     OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO);
@@ -45,4 +44,6 @@ public interface OrderService {
     void complete(Long id);
 
     void reminder(Long id);
+
+    TurnoverReportVO turnoverStatistics(LocalDate begin, LocalDate end);
 }
