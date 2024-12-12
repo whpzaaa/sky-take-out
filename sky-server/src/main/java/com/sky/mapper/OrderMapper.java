@@ -40,4 +40,6 @@ public interface OrderMapper {
     Double getSumByTimeAndStatus(LocalDateTime beginTime, LocalDateTime endTime, Integer status);
 
     Double getSumByTimeAndStatus(Map map);
+
+    Integer getOrderCount(Map map);
 }

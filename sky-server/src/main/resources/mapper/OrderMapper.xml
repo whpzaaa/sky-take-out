@@ -86,5 +86,19 @@
             </if>
         </where>
     </select>
+    <select id="getOrderCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(id) from sky_take_out.orders
+        <where>
+            <if test="beginTime != null">
+                order_time  &gt; #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and order_time  &lt; #{endTime}
+            </if>
+            <if test="status != null">
+                and status  = #{status}
+            </if>
+        </where>
+    </select>
 
 </mapper>
