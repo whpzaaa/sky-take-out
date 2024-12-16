@@ -146,6 +146,13 @@ public class OrderServiceImpl implements OrderService {
 //                .build();
 
         orderMapper.update(orders);
+        //封装数据
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("type",1);
+        map.put("orderId",ordersDB.getId());
+        map.put("content","订单号"+ordersDB.getNumber());
+        //将封装好的数据转为JSON使用wenSocket技术发送
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
 
         return vo;
     }

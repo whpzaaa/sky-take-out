@@ -103,23 +103,6 @@ public class OrderController {
         orderService.repetition(id);
         return Result.success();
     }
-    /**
-     * 模拟微信支付成功后订单来单提醒
-     * @param orderId
-     */
-    @ApiOperation("订单来单提醒接口")
-    @GetMapping("/orderAdvice")
-    public void orderAdvice(Long orderId){
-        //根据订单ID查询数据
-        Orders orders = orderService.getOrderByOrderId(orderId);
-        //封装数据
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("type",1);
-        map.put("orderId",orderId);
-        map.put("content","订单号"+orders.getNumber());
-        //将封装好的数据转为JSON使用wenSocket技术发送
-        webSocketServer.sendToAllClient(JSON.toJSONString(map));
-    }
     @GetMapping("reminder/{id}")
     @ApiOperation("用户催单")
     public Result reminder(@PathVariable Long id){
